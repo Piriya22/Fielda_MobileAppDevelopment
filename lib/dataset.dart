@@ -32,40 +32,46 @@ class Weather {
 
 String appId = "2931ce15bce6c867358aeed5c3610677";
 
-
-
-Future<List> fetchData(String lat,String lon) async{
-  var url = "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&appid=$appId";
+Future<List<Weather>> fetchData(String lat, String lon) async {
+  var url =
+      "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&appid=$appId";
   var response = await http.get(Uri.parse(url));
-  DateTime date = DateTime.now();
-  if(response.statusCode==200){
+
+  if (response.statusCode == 200) {
     var res = json.decode(response.body);
-  // current temp
+    var mainData = res["main"];
+    var weatherData = res["weather"][0];
+    var windData = res["wind"];
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('EEEE, MMM d, yyyy').format(now);
 
-    var date = res["dt"];
-    var tempdate = DateTime.fromMillisecondsSinceEpoch(date * 1000);
-    var mDate = DateFormat('MM/dd/yyyy, hh:mm a').format(tempdate);
-
-    //hourly
-    //var hourOnly = tempdate.hour;
-    //var minutesOnly = tempdate.minute;
-
-    var data = res["main"];
     Weather currentTemp = Weather(
-      current : data["main"]["temp"].round(),
-      name: res["weather"][0]["main"].toString(),
-      day: mDate,
-      wind: res["wind"]["speed"].round(),
-      humidity: data["humidity"].round(),
-      location: res["name"].round(),
+      current: mainData["temp"]?.round(),
+      name: weatherData["main"]?.toString(),
+      day: formattedDate,
+      wind: windData["speed"]?.round(),
+      humidity: mainData["humidity"]?.round(),
+      location: res["name"]?.toString(),
       image: "assets/cloud.png",
     );
 
-    print("gfghjk");
+    List<Weather> todayWeather = [];
+    for (var i = 0; i < 4; i++) {
+      var mDate = DateFormat('hh:mm a').format(now);
+      var hourOnly = now.hour;
+      var minutesOnly = now.minute;
+      var hourly = Weather(
+        current: mainData["temp"]?.round() ?? 0,
+        image: "assets/cloud.png",
+        time: "$hourOnly : $minutesOnly",
+      );
+      todayWeather.add(hourly);
+    }
+
     return [currentTemp];
   }
-return [null];
 
+  return [];
 }
 
 List<Weather> todayWeather = [
@@ -74,7 +80,6 @@ List<Weather> todayWeather = [
   Weather(current: 23, image: "assets/cloud.png", time: "11:00"),
   Weather(current: 23, image: "assets/cloud.png", time: "11:00"),
 ];
-
 
 Weather tomorrowTemp = Weather(
   max: 23,
@@ -137,4 +142,3 @@ List<Weather>? sevenDay = [
     name: "snow",
   )
 ];
-

@@ -81,7 +81,7 @@ class _CurrentWeatherState extends State<CurrentWeather> {
                 children: [
                   const Icon(CupertinoIcons.map_fill, color: Colors.white),
                   Text(
-                  currentTemp.current.toString(),
+                  currentTemp.location.toString(),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 30),
                   ),
@@ -97,7 +97,7 @@ class _CurrentWeatherState extends State<CurrentWeather> {
                 Positioned.fill(
                   child: Image(
                     image: AssetImage(currentTemp.image ?? ''),
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                     height: 30,
                   ),
                 ),
@@ -117,13 +117,13 @@ class _CurrentWeatherState extends State<CurrentWeather> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 8),
                         Text(
                           currentTemp.name ?? '',
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 18,
                           ),
                         ),
+                        SizedBox(height: 7),
                         SizedBox(height: 60),
                         Text(
                           currentTemp.day ?? '',
